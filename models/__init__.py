@@ -1,1 +1,1 @@
-from .general import Product, Industry
+from .general import Product, Industry, Naics, NaicsEstablishmentsState, ProductCode
