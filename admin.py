@@ -1,13 +1,18 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Product, Industry, Naics, NaicsEstablishmentsState, ProductCode
+from .models.general import GeographyLevel, GeographyPort, GeographyState, GeographyDetail, ProductCodeType, ProductCodeDetail
+from .models.foreign_trade import ForeignTrade
 
-# ==> default admin registration
-#admin.site.register( Activity )
-admin.site.register( Product )
-admin.site.register( ProductCode )
+# ==> geography 
+admin.site.register( GeographyLevel )
+admin.site.register( GeographyPort )
+admin.site.register( GeographyState )
+admin.site.register( GeographyDetail )
 
-admin.site.register( Industry )
-admin.site.register( Naics )
-admin.site.register( NaicsEstablishmentsState )
+# ==> product codes
+admin.site.register( ProductCodeType )
+admin.site.register( ProductCodeDetail )
+
+# ==> foreign trade data  
+admin.site.register( ForeignTrade )

@@ -5,7 +5,7 @@ from django.utils import timezone
 
 class GeographyLevel(models.Model): 
     # example: zip, county, port, state, national; required 
-    level = models.CharField(max_length=255)
+    level = models.CharField(max_length=255, default ="")
     meta_details = models.CharField(max_length=255, default="")
 
 class GeographyPort(models.Model): 
@@ -17,7 +17,7 @@ class GeographyState(models.Model):
     state_abbreviation = models.CharField(max_length=255, default="")
 
 class GeographyDetail(models.Model): 
-    level = models.ForeignKey("GeographyLevels", on_delete = models.CASCADE) 
+    level = models.ForeignKey("GeographyLevel", on_delete = models.CASCADE) 
     zipcode = models.CharField(max_length=255, default="")
     fips_code = models.CharField(max_length=255, default="")
     geo_id = models.CharField(max_length=255, default="")
