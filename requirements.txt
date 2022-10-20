@@ -1,0 +1,8 @@
+django<4.0
+djangorestframework==3.12.4
+djangorestframework_simplejwt
+drf-yasg
+django-filter
+django-taggit
+# we'll figure out installing uwsgi later -- conda install as primary unless there is better option through yum etc 
+# uwsgi

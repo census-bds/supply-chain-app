@@ -1,0 +1,3 @@
+# django-json-widget 
+# django-seed 
+pyjwt==v1.7.1
