@@ -21,9 +21,9 @@ class GeographyDetail(models.Model):
     zipcode = models.CharField(max_length=255, default="")
     fips_code = models.CharField(max_length=255, default="")
     geo_id = models.CharField(max_length=255, default="")
-    port = models.ForeignKey("GeographyPort", on_delete = models.CASCADE)
+    port = models.ForeignKey("GeographyPort", on_delete = models.CASCADE, null = True)
     county = models.CharField(max_length=255, default="")
-    state = models.ForeignKey("GeographyState", on_delete = models.CASCADE)
+    state = models.ForeignKey("GeographyState", on_delete = models.CASCADE, null = True)
     country = models.CharField(max_length=255, default="USA")
 
 class ProductCodeType(models.Model): 
@@ -32,5 +32,9 @@ class ProductCodeType(models.Model):
 
 class ProductCodeDetail(models.Model): 
     product_code_type = models.ForeignKey("ProductCodeType", on_delete = models.CASCADE)
+    product_code_level = models.CharField(max_length=255, default="")
+    
+class ProductCode(models.Model): 
     product_name =  models.CharField(max_length=255, default="")
-    product_code_detail = models.CharField(max_length=255, default="")
+    product_code = models.CharField(max_length=255, default = "")
+    product_code_detail = models.ForeignKey("ProductCodeDetail", on_delete = models.CASCADE)
