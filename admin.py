@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from .models.general import GeographyLevel, GeographyPort, GeographyState, GeographyDetail, ProductCodeType, ProductCodeDetail
-from .models.foreign_trade import ForeignTrade
+from .models.foreigntrade import ForeignTrade
 
 # ==> geography 
 admin.site.register( GeographyLevel )
