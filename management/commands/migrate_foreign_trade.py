@@ -155,10 +155,12 @@ class Command(BaseCommand):
         # ['HS6']
         # initialize GeographyPort tables 
         # initialize GeographyState tables 
-        geo_df = intlT.combine_geo()
-        # will want to customize this better for code, level, and datetime types & other params
-        product_code = 'hs'
-        product_lvl = '6'
-        print(geo_df)
-        # self.FT_objects(geo_df, 'YEAR', product_code, product_lvl)
+        hs_codes = ['HS2', 'HS4', 'HS6', 'HS10']
+        geos = ['state', 'port', None]
+        for hs in hs_codes:
+            for geo in geos:
+                df = intlT.combine_geo(geo=geo, hs=hs)
+                product_lvl = hs[2:]
+                self.FT_objects(df, 'YEAR', 'hs', product_lvl)
+        #TO DO: load month values
 
