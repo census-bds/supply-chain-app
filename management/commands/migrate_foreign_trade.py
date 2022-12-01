@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-
-from supply_chain_apis.data_source import IntlTrade
+from supply_chain_apis.intltrade import IntlTrade
+from supply_chain_apis.exceptions import RequestBlankException
 from datetime import datetime
 from scip.models import ForeignTrade, GeographyDetail, ProductCode, ProductCodeDetail, GeographyLevel, ProductCodeType
 # complete script 5/6/2021
@@ -75,7 +75,7 @@ class Command(BaseCommand):
                     level = geo_lvl, 
                     zipcode = gd_dict['zipcode'], 
                     fips_code = gd_dict['fips_code'], 
-                    geo_id = gd_dict['geo_id'], 
+                    geo_id = gd_dict['geo_id'],
                     port = gd_dict['port'], 
                     county = gd_dict['country'], 
                     state = gd_dict['state'], 
@@ -124,7 +124,7 @@ class Command(BaseCommand):
             hs6_val = row[pd_val_column.upper()] 
 
             pd = self.PD_object(pd_lvl, pd_code, hs6_val)
-            gd = self.GD_object(None)
+            gd = self.GD_object(None) #TO DO: add geo param to FT_objects
 
             ft_exists = ForeignTrade.objects.filter(
                 geography = gd, 
@@ -152,15 +152,19 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("handling")
         intlT = IntlTrade()
-        # ['HS6']
-        # initialize GeographyPort tables 
-        # initialize GeographyState tables 
         hs_codes = ['HS2', 'HS4', 'HS6', 'HS10']
         geos = ['state', 'port', None]
+        datetypes = ['month', 'year']
         for hs in hs_codes:
             for geo in geos:
-                df = intlT.combine_geo(geo=geo, hs=hs)
-                product_lvl = hs[2:]
-                self.FT_objects(df, 'YEAR', 'hs', product_lvl)
-        #TO DO: load month values
+                for d in datetypes:
+                    try:
+                        df = intlT.combine_geo(geo=geo, hs=hs, datetype=d)
+                    except RequestBlankException:
+                        continue
+                    #TO DO: pass exception if invalid call
+                    product_lvl = hs[2:]
+                    self.FT_objects(
+                        df, 'YEAR' if d == 'year' else 'MONTH', 'hs', product_lvl
+                    )
 
