@@ -5,7 +5,7 @@ from django.utils import timezone
 
 class ForeignTrade(models.Model): 
     geography = models.ForeignKey("GeographyDetail", on_delete = models.CASCADE, null = True)
-    product_code_details = models.ForeignKey("ProductCodeDetail", on_delete = models.CASCADE, null = True)
+    product_code_details = models.ForeignKey("ProductCode", on_delete = models.CASCADE, null = True)
     export_value = models.PositiveIntegerField()
     import_value = models.PositiveIntegerField()
     # year = models.CharField(max_length = 255, default = "")
