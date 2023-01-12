@@ -1,2 +1,2 @@
-from .general import GeographyLevel, GeographyPort, GeographyState, GeographyDetail, ProductCode, ProductCodeType, ProductCodeDetail
+from .general import GeographyLevel, GeographyPort, GeographyState, GeographyDetail, ProductCode, ProductCodeType, ProductCodeDetail, ProductCodeCrosswalk, ProductCodeArchive
 from .foreigntrade import ForeignTrade

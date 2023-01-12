@@ -38,8 +38,18 @@ class Command(BaseCommand):
                 'zipcode' : "", 
                 'fips_code' : "", 
                 'geo_id' : "", 
-                'port' : None, 
-                'county' : "", 
+                'port' : 8, 
+                'county': "", 
+                'state' : None, 
+                'country' : "USA"
+            }      
+            gd_dict = {
+                'level': geo_lvl, 
+                'zipcode' : "", 
+                'fips_code' : "", 
+                'geo_id' : "", 
+                'port' : 8, 
+                'county': "",
                 'state' : None, 
                 'country' : "USA"
             }      
@@ -49,7 +59,7 @@ class Command(BaseCommand):
             fips_code = gd_dict['fips_code'], 
             geo_id = gd_dict['geo_id'], 
             port = gd_dict['port'], 
-            county = gd_dict['country'], 
+            county = gd_dict['county'], 
             state = gd_dict['state'], 
             country = gd_dict['country']
         ).exists()
