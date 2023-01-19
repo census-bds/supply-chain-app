@@ -31,7 +31,13 @@ class Command(BaseCommand):
                 'state' : None, 
                 'country' : "USA"
             }         
-        # need to update this dictionary for county, port, state, zip levels    
+        # need to update this dictionary for county, port, state, zip levels   
+        # we will have a geography concordance/crosswalk using gis after shapefiles with overlapping geos 
+        # keep geo meta data simple --> everything will be in geo id and links to census tiger which has the shape files 
+        # just have geo id and level 
+        # TODO: need to migrate into relevant geo id info -- tiger shapefile 
+        # https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
+        # will want to create a new geo id model 
         elif geo == "county": 
             gd_dict = {
                 'level': geo_lvl, 
