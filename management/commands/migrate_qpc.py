@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand, CommandError
 
 from supply_chain_apis.qpc import QPC
 from datetime import datetime
-import openpyxl
 # from scip.models import .
 # complete script 5/6/2021
 class Command(BaseCommand):
@@ -16,6 +15,7 @@ class Command(BaseCommand):
         for (label, df) in dfs: 
             print(label)
             print(df.head())
+
             qpc = QPC(
                 naics_code = df['NAICS Code(s)'], 
                 description = df['Description'], 

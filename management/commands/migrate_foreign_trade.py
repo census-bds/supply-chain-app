@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from supply_chain_apis.intltrade import IntlTrade
 from supply_chain_apis.exceptions import RequestBlankException
 from datetime import datetime
-from scip.models import ForeignTrade, GeographyDetail, ProductCode, ProductCodeDetail, GeographyLevel, ProductCodeType, GeoId
+from scip.models import ForeignTrade, ProductCode, ProductCodeDetail, GeographyLevel, ProductCodeType, GeoId
 # complete script 5/6/2021
 class Command(BaseCommand):
     help = 'Migrate data'
@@ -13,7 +13,7 @@ class Command(BaseCommand):
 # 0        89682644    186922035  2020  010121
 # 1       458307529    108810155  2020  010129
 
-    def GD_object(self, geo, geo_id, geo_val):               
+    def GD_object(self, geo, geo_id):               
         geographylvl_exists = GeographyLevel.objects.filter(level=geo).exists()
         if geographylvl_exists:         
             geo_lvl = GeographyLevel.objects.get(level=geo)
@@ -30,58 +30,19 @@ class Command(BaseCommand):
 
         # TODO: creating new geoid objects for every geo detail object
         # will want to have another script cleaning up all these geo detail objects when we get geo ids...
-        if geo_id: 
-            geo_id_ref = GeoId.objects.get(
-                geoid_value = geo_id
-
-            )
+        # TODO: get rid of port / state differentiation, just store geo id value once it comes in through the dataframe 
+        if geo_id == None: 
+            geo_id_ref = GeoId(
+                geoid_value = "replace",
+                level = geo_lvl
+            ).save()
         else: 
-            # TODO might want to clean up this part -- seems repetitive with "port", "state" if/else statements
-            if geo == "port": 
-                geo_id_exists = GeoId.objects.filter(
-                    port = geo_val
-                ).exists()
-                if not geo_id_exists: 
-                    geo_id_ref = GeoId(
-                        port = geo_val 
-                    ).save()
-                else: 
-                    geo_id_ref = GeoId.objects.get(
-                        port = geo_val
-                    )
-            elif geo == "state": 
-                geo_id_exists = GeoId.objects.filter(
-                    state = geo_val
-                ).exists()
-                if not geo_id_exists: 
-                    geo_id_ref = GeoId(
-                        state = geo_val
-                    ).save()
-                else: 
-                    geo_id_ref = GeoId.objects.get(
-                        state = geo_val 
-                    )
-            else: 
-                geo_id_ref = None
-
-        geo_detail_exists = GeographyDetail.objects.filter(
-            level = geo_lvl, 
-            geo = geo_id_ref
-        ).exists()
-        if not geo_detail_exists: 
-                # in case exact thing doesn't exist then check if there is a match 
-                # if there is match on level, then update etc  
-                gd, created = GeographyDetail.objects.update_or_create(
-                    level = geo_lvl, 
-                    geo = geo_id_ref
-                )
-        else: 
-            gd = GeographyDetail.objects.get(
-                    level = geo_lvl, 
-                    geo = geo_id_ref
+            geo_id_ref = GeoId.objects.update_or_create(
+                geoid_value = geo_id,
+                level = geo_lvl
             )
 
-        return gd
+        return geo_id_ref
     def PD_object(self, level, type, val): 
         typee = ProductCodeType.objects.get(product_code_type=type)
         pd_detail_exists = ProductCodeDetail.objects.filter(product_code_type = typee, product_code_level = level).exists()
@@ -120,8 +81,8 @@ class Command(BaseCommand):
             hs6_val = row[pd_val_column.upper()] 
 
             pd = self.PD_object(pd_lvl, pd_code, hs6_val)
-            # TODO will eventually want to get geo_id 
-            gd = self.GD_object(geo, None, geo_val) #TO DO: add geo param to FT_objects
+            # TODO will eventually want to get geo_id - double check 
+            gd = self.GD_object(geo, None) #TO DO: add geo param to FT_objects
 
             ft_exists = ForeignTrade.objects.filter(
                 geography = gd, 
@@ -147,6 +108,11 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        # capture any results that are missing geoids later 
+        # TODO look at example tiger shp file in geopandas -- see shape & attr
+        # postgres -- extension to postgres 
+        # postgis holds shp files; geospatial queries -- select by zipcode in county etc 
+        # extension for postgres dbs -- useful for overlapping geographies 
         print("handling")
         intlT = IntlTrade()
         hs_codes = ['HS2', 'HS4', 'HS6', 'HS10']

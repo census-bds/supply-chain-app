@@ -18,13 +18,14 @@ class GeographyState(models.Model):
     state_abbreviation = models.CharField(max_length=255, default="")
 
 class GeoId(models.Model): 
+    # geoid captures geo level 
     geoid_value = models.CharField(max_length=255, default="")
-    port = models.CharField(max_length=255, default="")
-    state = models.CharField(max_length=255, default="")
-
-class GeographyDetail(models.Model): 
+    # port = models.CharField(max_length=255, default="")
+    # state = models.CharField(max_length=255, default="")
     level = models.ForeignKey("GeographyLevel", on_delete = models.CASCADE) 
-    geo = models.ForeignKey("GeoId", on_delete = models.CASCADE, null=True)
+
+# class GeographyDetail(models.Model): 
+#     geo = models.ForeignKey("GeoId", on_delete = models.CASCADE, null=True)
 
 class ProductCodeType(models.Model): 
     # 'hs', 'sctg', 'napcs', 'sitc', etc 
