@@ -34,5 +34,5 @@ class Command(BaseCommand):
         print("handling")
         qpc = QPC()
         urls = qpc.generate_urls()
-        dfs = qpc.clean_qpc_file(urls) 
-        self.migrate_qpc_dfs(dfs)
+        qpc.clean_qpc_file(urls) 
+        # self.migrate_qpc_dfs(dfs)

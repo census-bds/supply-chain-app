@@ -22,7 +22,7 @@ class GeoId(models.Model):
     geoid_value = models.CharField(max_length=255, default="")
     # port = models.CharField(max_length=255, default="")
     # state = models.CharField(max_length=255, default="")
-    level = models.ForeignKey("GeographyLevel", on_delete = models.CASCADE) 
+    level = models.ForeignKey("GeographyLevel", on_delete = models.CASCADE, null = True) 
 
 # class GeographyDetail(models.Model): 
 #     geo = models.ForeignKey("GeoId", on_delete = models.CASCADE, null=True)
