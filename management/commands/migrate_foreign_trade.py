@@ -69,20 +69,22 @@ class Command(BaseCommand):
                     product_code_detail = pd_detail
                 ).save()
         return pd
-    def FT_objects(self, df, geo, datetime_type, pd_code, pd_lvl): 
+    def FT_objects(self, df, datetime_type): 
         all_ft_objects = []
         # not sure what is a good parameter for HS6... for the columns 
         for index, row in df.iterrows():
+            pd_lvl = row['COMM_LVL']
+            pd_code = row['HS']
             import_val = row['import_value']
             export_val = row['export_value']
-            geo_val = row[geo] if geo else None
+            geo_val = row['GEO_ID']
             datetime_val = row[datetime_type]
             pd_val_column = pd_code+pd_lvl
             hs6_val = row[pd_val_column.upper()] 
 
             pd = self.PD_object(pd_lvl, pd_code, hs6_val)
             # TODO will eventually want to get geo_id - double check 
-            gd = self.GD_object(geo, None) #TO DO: add geo param to FT_objects
+            gd = self.GD_object(geo_val, None) #TO DO: add geo param to FT_objects
 
             ft_exists = ForeignTrade.objects.filter(
                 geography = gd, 
