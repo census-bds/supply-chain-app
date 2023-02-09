@@ -4,7 +4,7 @@ from django.utils import timezone
 # Create your models here.
 
 class ForeignTrade(models.Model): 
-    geography = models.ForeignKey("GeographyDetail", on_delete = models.CASCADE, null = True)
+    geography = models.ForeignKey("GeoId", on_delete = models.CASCADE, null = True)
     product_code_details = models.ForeignKey("ProductCode", on_delete = models.CASCADE, null = True)
     export_value = models.PositiveIntegerField()
     import_value = models.PositiveIntegerField()

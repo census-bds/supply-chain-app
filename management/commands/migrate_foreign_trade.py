@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from supply_chain_apis.intltrade import IntlTrade
 from supply_chain_apis.exceptions import RequestBlankException
 from datetime import datetime
-from scip.models import ForeignTrade, GeographyDetail, ProductCode, ProductCodeDetail, GeographyLevel, ProductCodeType
+from scip.models import ForeignTrade, ProductCode, ProductCodeDetail, GeographyLevel, ProductCodeType, GeoId
 # complete script 5/6/2021
 class Command(BaseCommand):
     help = 'Migrate data'
@@ -13,80 +13,36 @@ class Command(BaseCommand):
 # 0        89682644    186922035  2020  010121
 # 1       458307529    108810155  2020  010129
 
-    def GD_object(self, geo = "national"):               
+    def GD_object(self, geo, geo_id):               
         geographylvl_exists = GeographyLevel.objects.filter(level=geo).exists()
         if geographylvl_exists:         
             geo_lvl = GeographyLevel.objects.get(level=geo)
         else: 
             geo_lvl = GeographyLevel(level=geo, meta_details = "").save()
+    
+        # need to update this dictionary for county, port, state, zip levels   
+        # we will have a geography concordance/crosswalk using gis after shapefiles with overlapping geos 
+        # keep geo meta data simple --> everything will be in geo id and links to census tiger which has the shape files 
+        # just have geo id and level 
+        # TODO: need to migrate into relevant geo id info -- tiger shapefile 
+        # https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
+        # will want to create a new geo id model 
 
-        if geo == "national": 
-            gd_dict = {
-                'level': geo_lvl, 
-                'zipcode' : "", 
-                'fips_code' : "", 
-                'geo_id' : "", 
-                'port' : None, 
-                'county' : "", 
-                'state' : None, 
-                'country' : "USA"
-            }         
-        # need to update this dictionary for county, port, state, zip levels    
-        elif geo == "county": 
-            gd_dict = {
-                'level': geo_lvl, 
-                'zipcode' : "", 
-                'fips_code' : "", 
-                'geo_id' : "", 
-                'port' : None, 
-                'county' : "", 
-                'state' : None, 
-                'country' : "USA"
-            }      
-        geo_detail_exists = GeographyDetail.objects.filter(
-            level = gd_dict['level'], 
-            zipcode = gd_dict['zipcode'], 
-            fips_code = gd_dict['fips_code'], 
-            geo_id = gd_dict['geo_id'], 
-            port = gd_dict['port'], 
-            county = gd_dict['country'], 
-            state = gd_dict['state'], 
-            country = gd_dict['country']
-        ).exists()
-        if not geo_detail_exists: 
-                # gd = GeographyDetail(
-                #     level = geo_lvl, 
-                #     zipcode = gd_dict['zipcode'], 
-                #     fips_code = gd_dict['fips_code'], 
-                #     geo_id = gd_dict['geo_id'], 
-                #     port = gd_dict['port'], 
-                #     county = gd_dict['country'], 
-                #     state = gd_dict['state'], 
-                #     country = gd_dict['country']
-                # ).save()
-                # in case exact thing doesn't exist then check if there is a match 
-                # if there is match on level, then update etc  
-                gd, created = GeographyDetail.objects.update_or_create(
-                    level = geo_lvl, 
-                    defaults = gd_dict
-                )
+        # TODO: creating new geoid objects for every geo detail object
+        # will want to have another script cleaning up all these geo detail objects when we get geo ids...
+        # TODO: get rid of port / state differentiation, just store geo id value once it comes in through the dataframe 
+        if geo_id == None: 
+            geo_id_ref = GeoId(
+                geoid_value = "replace",
+                level = geo_lvl
+            ).save()
         else: 
-            gd = GeographyDetail.objects.get(
-                    level = geo_lvl, 
-                    zipcode = gd_dict['zipcode'], 
-                    fips_code = gd_dict['fips_code'], 
-                    geo_id = gd_dict['geo_id'],
-                    port = gd_dict['port'], 
-                    county = gd_dict['country'], 
-                    state = gd_dict['state'], 
-                    country = gd_dict['country']
-                )
+            geo_id_ref = GeoId.objects.update_or_create(
+                geoid_value = geo_id,
+                level = geo_lvl
+            )
 
-        # else: 
-        #     gd = GeographyDetail(
-
-        #     )
-        return gd
+        return geo_id_ref
     def PD_object(self, level, type, val): 
         typee = ProductCodeType.objects.get(product_code_type=type)
         pd_detail_exists = ProductCodeDetail.objects.filter(product_code_type = typee, product_code_level = level).exists()
@@ -113,18 +69,20 @@ class Command(BaseCommand):
                     product_code_detail = pd_detail
                 ).save()
         return pd
-    def FT_objects(self, df, datetime_type, pd_code, pd_lvl): 
+    def FT_objects(self, df, geo, datetime_type, pd_code, pd_lvl): 
         all_ft_objects = []
         # not sure what is a good parameter for HS6... for the columns 
         for index, row in df.iterrows():
             import_val = row['import_value']
             export_val = row['export_value']
+            geo_val = row[geo] if geo else None
             datetime_val = row[datetime_type]
             pd_val_column = pd_code+pd_lvl
             hs6_val = row[pd_val_column.upper()] 
 
             pd = self.PD_object(pd_lvl, pd_code, hs6_val)
-            gd = self.GD_object(None) #TO DO: add geo param to FT_objects
+            # TODO will eventually want to get geo_id - double check 
+            gd = self.GD_object(geo, None) #TO DO: add geo param to FT_objects
 
             ft_exists = ForeignTrade.objects.filter(
                 geography = gd, 
@@ -150,6 +108,11 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        # capture any results that are missing geoids later 
+        # TODO look at example tiger shp file in geopandas -- see shape & attr
+        # postgres -- extension to postgres 
+        # postgis holds shp files; geospatial queries -- select by zipcode in county etc 
+        # extension for postgres dbs -- useful for overlapping geographies 
         print("handling")
         intlT = IntlTrade()
         hs_codes = ['HS2', 'HS4', 'HS6', 'HS10']
@@ -164,7 +127,12 @@ class Command(BaseCommand):
                         continue
                     #TO DO: pass exception if invalid call
                     product_lvl = hs[2:]
+                    print("data frame: ", df)
                     self.FT_objects(
-                        df, 'YEAR' if d == 'year' else 'MONTH', 'hs', product_lvl
+                        df, 
+                        geo, 
+                        'YEAR' if d == 'year' else 'MONTH', 
+                        'hs', 
+                        product_lvl
                     )
 

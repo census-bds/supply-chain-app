@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import ForeignTrade, GeographyDetail, ProductCode
+from .models import ForeignTrade, GeoId, ProductCode
 
-class GeographyDetailSerializer(serializers.ModelSerializer): 
+class GeoIdSerializer(serializers.ModelSerializer): 
     class Meta: 
-        model = GeographyDetail
+        model = GeoId
         fields = '__all__'
 class ProductCodeSerializer(serializers.ModelSerializer): 
     class Meta: 
@@ -14,7 +14,7 @@ class ForeignTradeSerializer(serializers.ModelSerializer):
     # if many to many, set many=True 
     # if want custom or particular field, example: field_name = serializers.RelatedField(source='field', read_only=True)
 
-    geography = GeographyDetailSerializer()
+    geography = GeoIdSerializer()
     product_code_details = ProductCodeSerializer()
     class Meta:
         model = ForeignTrade
