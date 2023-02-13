@@ -18,6 +18,7 @@
 ## Overview / Status of API endpoints 
 
 # Database Architecture 
+![Supply Chain Insights Plaform Database Architecture V1](https://github.com/yonglid/supply-chain-app/blob/main/scip_database.PNG?raw=true)
 
 # System Architecture 
 ![Supply Chain Insights Plaform System Architecture V1](https://github.com/yonglid/supply-chain-app/blob/main/system_diagram_scip.PNG?raw=true)
