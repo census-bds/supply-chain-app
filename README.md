@@ -1,15 +1,20 @@
-Using the django app for supply chain database models 
+# Django App for Supply Chain Insights' Data Models and API 
+1. Clone this repo on the same path as where you have the `manage.py` file for your Django Project 
+2. By default this Django app is called 'scip' -- Install the app in your Django project settings in the file named `settings.py` 
 
--- make sure you install this app under your django project settings -- by default this app is called as 'scip' 
+# Data Migration Scripts 
+* Scripts for migrating data into the database live in `scip/management/commands` folder 
+* Data is being migrated by calling a new API wrapper (which you can find code for in `supply_chain_apis` repo) 
 
-# data migration scripts
-exists in `scip/management` folder 
+# API Docs 
 
-# api & swagger docs
-REST API using `djangorestframework` library 
+* The API is create using the Django REST Framework toolkit, called `djangorestframework` library in the settings 
 
-endpoint queries are defined in `views.py` and tied to endpoint urls in `scip/urls.py`
+* Queries for endpoints are defined in `views.py` and endpoint urls are defined in `scip/urls.py`
 
-access API endpoints at `/api`
-access swagger docs at `/api-docs` 
+* API endpoints at `/api`
+* API Swagger Docs at `/api-docs` 
 
+# Database Architecture 
+
+# System Architecture 
