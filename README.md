@@ -4,7 +4,7 @@
 
 # Data Migration Scripts 
 * Scripts for migrating data into the database live in `scip/management/commands` folder 
-* Data is being migrated by calling a new API wrapper (which you can find code for in `supply_chain_apis` repo) 
+* Data is being migrated by calling a new API wrapper (which you can find code for in `supply-chain-apis` repo) 
 
 # API Docs 
 
@@ -15,6 +15,10 @@
 * API endpoints at `/api`
 * API Swagger Docs at `/api-docs` 
 
+## Overview / Status of API endpoints 
+
 # Database Architecture 
 
 # System Architecture 
+![Supply Chain Insights Plaform System Architecture V1](https://github.com/yonglid/supply-chain-app/blob/main/system_diagram_scip.PNG?raw=true)
+
