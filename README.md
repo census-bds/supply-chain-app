@@ -1,6 +1,7 @@
 # Django App for Supply Chain Insights' Data Models and API 
 1. Clone this repo on the same path as where you have the `manage.py` file for your Django Project 
 2. By default this Django app is called 'scip' -- Install the app in your Django project settings in the file named `settings.py` 
+3. You'll want to have your conda activated and then install the requirements.txt with `conda install --file requirements.txt` 
 
 # Data Migration Scripts 
 * Scripts for migrating data into the database live in `scip/management/commands` folder 
