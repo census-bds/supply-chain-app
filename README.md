@@ -16,6 +16,9 @@
 * API Swagger Docs at `/api-docs` 
 
 ## Overview / Status of API endpoints 
+### `/qpc`
+### `/foreigntrade` 
+### `/productcode`
 
 # Database Architecture 
 ![Supply Chain Insights Plaform Database Architecture V1](https://github.com/yonglid/supply-chain-app/blob/main/scip_database.PNG?raw=true)
